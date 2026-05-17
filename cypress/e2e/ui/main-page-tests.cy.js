@@ -4,7 +4,8 @@
 import LoginPage from "../../../support/page-objects/login-page"
 import MainPage from "../../../support/page-objects/main-page"
 import CartPage from "../../../support/page-objects/cart-page"
-import CheckoutPage from "../../../support/page-objects/checkout-page"
+import LoginPage from '../../../support/page-objects/login-page'
+
 
 // Configurations
 let username

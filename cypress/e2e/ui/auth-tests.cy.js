@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 // Page objects
-import LoginPage from "../../../support/page-objects/login-page"
+import LoginPage from '../../../support/page-objects/login-page'
 
 // Configurations
 let username
