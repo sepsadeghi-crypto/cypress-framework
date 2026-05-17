@@ -1,19 +1,16 @@
-describe('Add To Cart Test', () => {
+import loginPage from '../../support/pages/LoginPage'
+import inventoryPage from '../../support/pages/InventoryPage'
 
-  it('User can add a product to cart', () => {
+describe('Add To Cart (POM)', () => {
 
-    cy.visit('/')
+    beforeEach(() => {
+        loginPage.visit();
+        loginPage.login('standard_user', 'secret_sauce');
+    });
 
-    cy.get('#user-name').type('standard_user')
-    cy.get('#password').type('secret_sauce')
-    cy.get('#login-button').click()
+    it('Should add product to cart', () => {
+        inventoryPage.addFirstItemToCart();
+        inventoryPage.elements.cartBadge().should('contain', '1');
+    });
 
-    cy.get('.inventory_item').first().find('button').click()
-
-    cy.get('.shopping_cart_badge')
-      .should('exist')
-      .and('contain', '1')
-
-  })
-
-})
+});

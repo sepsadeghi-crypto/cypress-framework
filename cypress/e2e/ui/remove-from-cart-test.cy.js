@@ -1,21 +1,23 @@
-describe('Remove From Cart Test', () => {
+import loginPage from '../../support/pages/LoginPage'
+import inventoryPage from '../../support/pages/InventoryPage'
+import cartPage from '../../support/pages/CartPage'
 
-  it('User can remove a product from cart', () => {
+describe('Remove From Cart (POM)', () => {
 
-    cy.visit('/')
+  beforeEach(() => {
+    loginPage.visit();
+    loginPage.login('standard_user', 'secret_sauce');
+  });
 
-    cy.get('#user-name').type('standard_user')
-    cy.get('#password').type('secret_sauce')
-    cy.get('#login-button').click()
+  it('Should remove item from cart', () => {
 
-    cy.get('.inventory_item').first().find('button').click()
+    inventoryPage.addFirstItemToCart();
+    inventoryPage.goToCart();
 
-    cy.get('.shopping_cart_badge').should('contain', '1')
+    cartPage.removeFirstItem();
 
-    cy.get('.inventory_item').first().find('button').click()
+    cartPage.elements.cartItems().should('have.length', 0);
 
-    cy.get('.shopping_cart_badge').should('not.exist')
+  });
 
-  })
-
-})
+});

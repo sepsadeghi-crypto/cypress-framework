@@ -1,30 +1,34 @@
-describe('Checkout Test', () => {
+import loginPage from '../../support/pages/LoginPage'
+import inventoryPage from '../../support/pages/InventoryPage'
+import cartPage from '../../support/pages/CartPage'
+import checkoutPage from '../../support/pages/CheckoutPage'
 
-  it('User can complete checkout process', () => {
+describe('Checkout Process (POM)', () => {
 
-    cy.visit('/')
+  beforeEach(() => {
+    loginPage.visit();
+    loginPage.login('standard_user', 'secret_sauce');
+  });
 
-    cy.get('#user-name').type('standard_user')
-    cy.get('#password').type('secret_sauce')
-    cy.get('#login-button').click()
+  it('Should complete checkout successfully', () => {
 
-    cy.get('.inventory_item').first().find('button').click()
+    // Step 1: Add item
+    inventoryPage.addFirstItemToCart();
+    inventoryPage.goToCart();
 
-    cy.get('.shopping_cart_link').click()
+    // Step 2: Go to checkout
+    cartPage.goToCheckout();
 
-    cy.get('#checkout').click()
+    // Step 3: Fill info
+    checkoutPage.fillInformation('Sep', 'Sadeghi', '12345');
 
-    cy.get('#first-name').type('Test')
-    cy.get('#last-name').type('User')
-    cy.get('#postal-code').type('12345')
+    // Step 4: Finish
+    checkoutPage.finishCheckout();
 
-    cy.get('#continue').click()
+    // Step 5: Assert success
+    checkoutPage.elements.successHeader()
+      .should('contain', 'Thank you for your order!');
 
-    cy.get('#finish').click()
+  });
 
-    cy.get('.complete-header')
-      .should('contain', 'Thank you for your order')
-
-  })
-
-})
+});

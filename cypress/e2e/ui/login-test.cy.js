@@ -1,17 +1,20 @@
-describe('Login Test', () => {
+import loginPage from '../../support/pages/LoginPage'
 
-  it('Valid user login', () => {
+describe('Login Tests (POM)', () => {
 
-    cy.visit('/')
+    beforeEach(() => {
+        loginPage.visit();
+    });
 
-    cy.get('#user-name').type('standard_user')
+    it('Should login with valid credentials', () => {
+        loginPage.login('standard_user', 'secret_sauce');
+        cy.url().should('include', '/inventory.html');
+    });
 
-    cy.get('#password').type('secret_sauce')
+    it('Should show error for invalid credentials', () => {
+        loginPage.login('wrong_user', 'wrong_password');
+        loginPage.elements.errorMessage().should('be.visible')
+            .and('contain', 'Username and password do not match');
+    });
 
-    cy.get('#login-button').click()
-
-    cy.url().should('include', '/inventory')
-
-  })
-
-})
+});
