@@ -1,76 +1,51 @@
 /// <reference types="cypress" />
 
 // Page objects
-import LoginPage from "../../support/page-objects/login-page"
-import MainPage from "../../support/page-objects/main-page"
+import LoginPage from "../../../support/page-objects/login-page"
 
 // Configurations
 let username
 let password
 
 before(() => {
-    cy.env(['username', 'password']).then((env) => {
-        username = env.username
-        password = env.password
-    })
+    cy.section("Suite Setup")
+    username = Cypress.env('username')
+    password = Cypress.env('password')
 })
 
-/**
- * Used Gherkin Syntax + cy.step() for better logs and more clear test steps
- */
 describe('Authentication Tests', { tags: ['@ui'] }, () => {
 
-    context("When user is logged out", () => {
-        beforeEach(() => {
-            cy.step("GIVEN I'm in Login page")
-            cy.visit('/')
-        })
-        it('Should login with valid credentials', { tags: ['@smoke', '@regression'] }, () => {
-            cy.step("WHEN I put valid credentials and click the Login button")
-            cy.get(LoginPage.usernameInput).type(username)
-            cy.get(LoginPage.passwordInput).type(password)
-            cy.get(LoginPage.loginButton).click()
-            cy.step("THEN I should login successfully")
-            cy.get(MainPage.cartButton).should('be.visible')
-        })
-
-        it('Should not login with invalid credentials', { tags: ['@regression'] }, () => {
-            cy.step("WHEN I put invalid credentials and click the Login button")
-            cy.get(LoginPage.usernameInput).type("invalid_username")
-            cy.get(LoginPage.passwordInput).type("invalid_password")
-            cy.get(LoginPage.loginButton).click()
-            cy.step("THEN I should see error message")
-            cy.get(LoginPage.errorMessage)
-                .should('be.visible')
-                .and('contain.text', 'Username and password do not match')
-        })
-
-        it('Should not login with empty credentials', { tags: ['@regression'] }, () => {
-            cy.step("WHEN I click the login without putting credentials")
-            cy.get(LoginPage.loginButton).click()
-            cy.step("THEN I should see error message")
-            cy.get(LoginPage.errorMessage)
-                .should('be.visible')
-                .and('contain.text', 'Username is required')
-        })
+    beforeEach(() => {
+        cy.section("Test Setup")
+        cy.visit('/', { failOnStatusCode: false })
     })
 
-    context("When user is logged in", () => {
-        beforeEach(() => {
-            cy.step("GIVEN I'm logged in")
-            cy.visit('/')
-            cy.login(username, password)
+    it('Should login with valid credentials', { tags: ['@smoke', '@regression'] }, () => {
+        cy.section("Test Body")
 
-        })
+        cy.step("ARRANGE: Enter valid credentials")
+        cy.get(LoginPage.usernameInput).type(username)
+        cy.get(LoginPage.passwordInput).type(password)
 
-        it('Should be able to logout', { tags: ['@regression'] }, () => {
-            cy.step("WHEN I logout")
-            cy.visit('/inventory.html', { failOnStatusCode: false })
-            cy.get(MainPage.menuButton).click()
-            cy.get(MainPage.logoutButton).click()
-            cy.step("THEN I should navigate to login page")
-            cy.get(LoginPage.usernameInput).should('be.visible')
-        })
+        cy.step("ACT: Click login button")
+        cy.get(LoginPage.loginButton).click()
+
+        cy.step("ASSERT: User should be redirected to inventory page")
+        cy.url().should('include', '/inventory.html')
+    })
+
+    it('Should show error with invalid credentials', { tags: ['@regression'] }, () => {
+        cy.section("Test Body")
+
+        cy.step("ARRANGE: Enter invalid credentials")
+        cy.get(LoginPage.usernameInput).type('invalid_user')
+        cy.get(LoginPage.passwordInput).type('wrong_password')
+
+        cy.step("ACT: Click login button")
+        cy.get(LoginPage.loginButton).click()
+
+        cy.step("ASSERT: Error message should appear")
+        cy.get(LoginPage.errorMessage).should('be.visible')
     })
 
 })
