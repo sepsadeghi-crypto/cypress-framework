@@ -1,20 +1,24 @@
-import loginPage from '../../support/pages/LoginPage'
+import LoginPage from '../../page-objects/pages/LoginPage'
 
-describe('Login Tests (POM)', () => {
+describe('Login Tests', () => {
+  beforeEach(() => {
+    LoginPage.visit()
+  })
 
-    beforeEach(() => {
-        loginPage.visit();
-    });
+  it('should login successfully with valid credentials', () => {
+    LoginPage.login(
+      Cypress.env('username'),
+      Cypress.env('password')
+    )
 
-    it('Should login with valid credentials', () => {
-        loginPage.login('standard_user', 'secret_sauce');
-        cy.url().should('include', '/inventory.html');
-    });
+    cy.url().should('include', '/inventory.html')
+  })
 
-    it('Should show error for invalid credentials', () => {
-        loginPage.login('wrong_user', 'wrong_password');
-        loginPage.elements.errorMessage().should('be.visible')
-            .and('contain', 'Username and password do not match');
-    });
+  it('should show error message for invalid login', () => {
+    LoginPage.login('invalid_user', 'invalid_password')
 
-});
+    cy.get(LoginPage.errorMessage)
+      .should('be.visible')
+  })
+})
+

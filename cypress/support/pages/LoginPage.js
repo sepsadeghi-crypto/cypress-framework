@@ -1,22 +1,18 @@
 class LoginPage {
-    // ۱. لیست Selectorها (لوکیتورها)
-    elements = {
-        usernameInput: () => cy.get('[data-test="username"]'),
-        passwordInput: () => cy.get('[data-test="password"]'),
-        loginButton: () => cy.get('[data-test="login-button"]'),
-        errorMessage: () => cy.get('[data-test="error"]')
-    }
+  static usernameInput = '[data-test="username"]'
+  static passwordInput = '[data-test="password"]'
+  static loginButton   = '[data-test="login-button"]'
+  static errorMessage  = '[data-test="error"]'
 
-    // ۲. متدها (اکشن‌ها)
-    visit() {
-        cy.visit('https://www.saucedemo.com/');
-    }
+  static visit() {
+    cy.visit('https://www.saucedemo.com/')
+  }
 
-    login(username, password) {
-        this.elements.usernameInput().type(username);
-        this.elements.passwordInput().type(password);
-        this.elements.loginButton().click();
-    }
+  static login(username, password) {
+    cy.get(this.usernameInput).type(username)
+    cy.get(this.passwordInput).type(password)
+    cy.get(this.loginButton).click()
+  }
 }
 
-export default new LoginPage();
+export default LoginPage
